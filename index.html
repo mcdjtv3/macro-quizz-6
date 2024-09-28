@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Démarche Marketing & Définition des Marchés</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>Quiz : Offre Globale et Demande Globale</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "Que représente la courbe OG (Offre Globale) ?", choices: ["La relation entre le prix et la demande de monnaie", "La relation entre la production et le niveau des prix", "La relation entre le taux d'intérêt et l'investissement", "La relation entre l'inflation et les taux de change"], correct: 1 },
+        { question: "Que montre la courbe DG (Demande Globale) ?", choices: ["L'effet du prix sur la demande", "L'effet des taux d'intérêt sur l'offre", "L'effet du PIB sur les exportations", "L'effet de l'inflation sur la masse monétaire"], correct: 0 },
+        { question: "Que se passe-t-il lorsque la production (Y) augmente dans le modèle OG-DG ?", choices: ["Le chômage augmente", "Le chômage diminue", "Les salaires diminuent", "Les prix baissent"], correct: 1 },
+        { question: "Que se passe-t-il si le niveau des prix anticipés (Pe) est supérieur au prix réel (P) ?", choices: ["Les salariés demandent des salaires plus élevés", "Les entreprises augmentent leur production", "Les salariés acceptent des baisses de salaire", "Les entreprises réduisent leur marge"], correct: 0 },
+        { question: "Quel est l'effet d'une augmentation de la masse monétaire (M) sur la demande globale (DG) ?", choices: ["La courbe DG se déplace vers la droite", "La courbe DG se déplace vers la gauche", "La courbe DG ne bouge pas", "Les prix diminuent"], correct: 0 },
+        { question: "Qu’est-ce qui fait augmenter la courbe de demande globale (DG) ?", choices: ["Une baisse de la masse monétaire", "Une baisse des dépenses publiques", "Une augmentation des taxes", "Une augmentation des dépenses publiques"], correct: 3 },
+        { question: "Dans le modèle IS-LM avec des prix flexibles, que se passe-t-il si les prix augmentent ?", choices: ["La demande de monnaie diminue", "La courbe LM se déplace vers la droite", "La demande de monnaie augmente", "Le taux d'intérêt diminue"], correct: 2 },
+        { question: "Qu’est-ce qu’un choc d'offre négatif dans le modèle OG-DG ?", choices: ["Une baisse des prix et une augmentation de la production", "Une augmentation des prix et une baisse de la production", "Une baisse des prix et du chômage", "Une augmentation des salaires et du taux de chômage"], correct: 1 },
+        { question: "Quel est l'effet d'une augmentation des taxes (T) sur la demande globale (DG) ?", choices: ["La courbe DG se déplace vers la droite", "La courbe DG reste stable", "La courbe DG se déplace vers la gauche", "La courbe DG se déplace vers le haut"], correct: 2 },
+        { question: "Qu'est-ce qu'un choc de demande ?", choices: ["Une variation inattendue de la demande qui modifie la production et les prix", "Une variation anticipée des salaires", "Une augmentation des prix uniquement", "Une baisse de la masse monétaire"], correct: 0 },
+        { question: "Que se passe-t-il lorsque les anticipations des prix sont réalisées (P = Pe) ?", choices: ["L'économie est en déséquilibre", "L'économie est à l'équilibre à son niveau de production naturel (Yn)", "Les salaires augmentent", "La courbe LM se déplace vers la droite"], correct: 1 },
+        { question: "Quel est l'impact d'une politique monétaire expansionniste sur la demande globale (DG) ?", choices: ["DG se déplace vers la gauche", "DG se déplace vers la droite", "Les prix diminuent", "Le chômage augmente"], correct: 1 },
+        { question: "Que se passe-t-il à moyen terme si les salaires augmentent trop vite ?", choices: ["La production augmente", "La production diminue et les prix augmentent", "Les entreprises embauchent plus", "Le chômage baisse"], correct: 1 },
+        { question: "Quel est l'effet d'une baisse de la masse monétaire sur la courbe LM ?", choices: ["La courbe LM se déplace vers la gauche", "La courbe LM se déplace vers la droite", "Les taux d'intérêt diminuent", "Le niveau de production augmente"], correct: 0 },
+        { question: "Quel est l'effet d'un choc d'offre sur le marché du travail ?", choices: ["Les salaires augmentent et le chômage diminue", "Le chômage augmente et les salaires réels baissent", "Le chômage reste stable", "La demande de travail augmente"], correct: 1 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+
+</html>
